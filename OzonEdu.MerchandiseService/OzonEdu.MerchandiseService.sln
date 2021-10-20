@@ -7,10 +7,12 @@ ProjectSection(SolutionItems) = preProject
 	README.md = README.md
 	.gitignore = .gitignore
 	Dockerfile = Dockerfile
-	src\docker-compose.yml = src\docker-compose.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{D766BBDB-6C12-458D-BF57-EA1B8B1E2319}"
+ProjectSection(SolutionItems) = preProject
+	deploy\docker-compose.yml = deploy\docker-compose.yml
+EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{033DCB4D-268C-43A9-B3FA-342408C82EFC}"
 EndProject
