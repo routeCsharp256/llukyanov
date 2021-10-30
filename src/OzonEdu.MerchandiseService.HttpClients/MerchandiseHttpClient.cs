@@ -29,8 +29,6 @@ namespace OzonEdu.MerchandiseService.HttpClients
             CancellationToken token)
         {
             throw new NotImplementedException();
-            // using var response = await _httpClient.PostAsync("v1/api/merch/ask", merchandiseItems, token);
-            // return await response.Content.ReadFromJsonAsync<MerchandiseOrderIdResponse>(cancellationToken: token);
         }
 
         public async Task<MerchandiseOrderStatusResponse> CheckMerchandise(MerchandiseOrderIdRequest merchandiseItems,

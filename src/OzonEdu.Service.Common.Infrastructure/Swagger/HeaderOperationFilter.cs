@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace OzonEdu.MerchandiseService.Infrastructure.Swagger
+namespace OzonEdu.Service.Common.Infrastructure.Swagger
 {
     public class HeaderOperationFilter : IOperationFilter
     {

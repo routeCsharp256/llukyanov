@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
-namespace OzonEdu.MerchandiseService.Infrastructure.Filters
+namespace OzonEdu.Service.Common.Infrastructure.Filters
 {
     public class GlobalExceptionFilter : ExceptionFilterAttribute
     {
@@ -22,12 +22,10 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Filters
                 context.Exception.Message,
                 context.Exception.StackTrace
             };
-
             var jsonResult = new JsonResult(resultObject)
             {
                 StatusCode = StatusCodes.Status500InternalServerError
             };
-            _logger.LogError("HTTP 500");
             context.Result = jsonResult;
         }
     }
