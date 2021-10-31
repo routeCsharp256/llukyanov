@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
+using OzonEdu.Service.Common.Infrastructure.Tools;
+using ServiceStack.Text;
 
 namespace OzonEdu.Service.Common.Infrastructure.Middlewares
 {
@@ -11,17 +13,18 @@ namespace OzonEdu.Service.Common.Infrastructure.Middlewares
     {
         private readonly ILogger<RequestLoggingMiddleware> _logger;
         private readonly RequestDelegate _next;
+        private readonly RecyclableMemoryStreamManager _responseStreamManager;
 
         public RequestLoggingMiddleware(RequestDelegate next, ILogger<RequestLoggingMiddleware> logger)
         {
             _next = next;
             _logger = logger;
+            _responseStreamManager = new RecyclableMemoryStreamManager();
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             await LogRequest(context);
-            await _next(context);
             await LogResponse(context);
         }
 
@@ -36,8 +39,8 @@ namespace OzonEdu.Service.Common.Infrastructure.Middlewares
                 {
                     context.Request.EnableBuffering();
                     using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
-                    var bodyAsText = reader.ReadToEndAsync();
-                    _logger.LogInformation("Request Body: " + bodyAsText);
+                    var bodyAsText = await reader.ReadToEndAsync();
+                    _logger.LogInformation("Request Body: " + TextTools.RemoveWhitespaces(bodyAsText));
 
                     context.Request.Body.Position = 0;
                 }
@@ -54,12 +57,19 @@ namespace OzonEdu.Service.Common.Infrastructure.Middlewares
             {
                 _logger.LogInformation("Response logged");
                 _logger.LogInformation("Response Headers: " + string.Join(";", context.Response.Headers));
-                if (context.Response.ContentLength > 0)
-                {
-                    using var reader = new StreamReader(context.Response.Body, leaveOpen: true);
-                    var bodyAsText = reader.ReadToEndAsync();
-                    _logger.LogInformation("Response Body: " + bodyAsText);
-                }
+
+                var originalBodyStream = context.Response.Body;
+                await using var responseBody = _responseStreamManager.GetStream();
+                context.Response.Body = responseBody;
+
+                await _next(context);
+
+                context.Response.Body.Seek(0, SeekOrigin.Begin);
+                var bodyAsText = await new StreamReader(context.Response.Body).ReadToEndAsync();
+                context.Response.Body.Seek(0, SeekOrigin.Begin);
+                _logger.LogInformation("Response Body: " + TextTools.RemoveWhitespaces(bodyAsText));
+
+                await responseBody.CopyToAsync(originalBodyStream);
             }
             catch (Exception e)
             {

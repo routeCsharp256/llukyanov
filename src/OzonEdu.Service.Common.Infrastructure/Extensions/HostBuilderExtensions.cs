@@ -23,8 +23,6 @@ namespace OzonEdu.Service.Common.Infrastructure.Extensions
                 {
                     options.SwaggerDoc("v1", new OpenApiInfo {Title = "OzonEdu.MerchandiseService", Version = "v1"});
                     options.CustomSchemaIds(x => x.FullName);
-                    // TODO: убрать комментарий
-                    // options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
                     options.OperationFilter<HeaderOperationFilter>();
                 });
             });
