@@ -7,6 +7,7 @@ ProjectSection(SolutionItems) = preProject
 	.gitignore = .gitignore
 	Dockerfile = Dockerfile
 	README.md = README.md
+	merchandise-service_bounded_context.drawio = merchandise-service_bounded_context.drawio
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{D766BBDB-6C12-458D-BF57-EA1B8B1E2319}"
@@ -30,6 +31,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.MerchandiseService.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.Service.Common.Infrastructure", "src\OzonEdu.Service.Common.Infrastructure\OzonEdu.Service.Common.Infrastructure.csproj", "{A8E3CB2E-237F-4E31-9B77-1466B4B63B2A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.MerchandiseService.Domain", "src\OzonEdu.MerchandiseService.Domain\OzonEdu.MerchandiseService.Domain.csproj", "{B28923B7-53E8-491E-831C-F92AA7EC05FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.MerchandiseService.Infrastructure", "src\OzonEdu.MerchandiseService.Infrastructure\OzonEdu.MerchandiseService.Infrastructure.csproj", "{94A4E98E-E4E8-4B0E-B495-CB2F98B876C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.MerchandiseService.Domain.Tests", "tests\OzonEdu.MerchandiseService.Domain.Tests\OzonEdu.MerchandiseService.Domain.Tests.csproj", "{64E43DC6-583D-4939-9C4B-DBA337CEDE6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OzonEdu.Common.Domain.Models", "src\OzonEdu.Common.Domain.Models\OzonEdu.Common.Domain.Models.csproj", "{BD725382-C4A4-4AB4-99A7-333D587D63FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +51,10 @@ Global
 		{CD7BAF64-1DE2-4B4A-8D53-0C9FAEF0B823} = {4C99DF5E-699F-494F-AE3D-DBD78398A612}
 		{A9605EDC-F9B2-4A8C-BBF2-67117B7EBD54} = {4C99DF5E-699F-494F-AE3D-DBD78398A612}
 		{A8E3CB2E-237F-4E31-9B77-1466B4B63B2A} = {4C99DF5E-699F-494F-AE3D-DBD78398A612}
+		{B28923B7-53E8-491E-831C-F92AA7EC05FF} = {4C99DF5E-699F-494F-AE3D-DBD78398A612}
+		{94A4E98E-E4E8-4B0E-B495-CB2F98B876C9} = {4C99DF5E-699F-494F-AE3D-DBD78398A612}
+		{64E43DC6-583D-4939-9C4B-DBA337CEDE6A} = {033DCB4D-268C-43A9-B3FA-342408C82EFC}
+		{BD725382-C4A4-4AB4-99A7-333D587D63FD} = {4C99DF5E-699F-494F-AE3D-DBD78398A612}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{388348F7-D084-4EEA-9782-8481034FF12B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -68,5 +81,21 @@ Global
 		{A8E3CB2E-237F-4E31-9B77-1466B4B63B2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8E3CB2E-237F-4E31-9B77-1466B4B63B2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8E3CB2E-237F-4E31-9B77-1466B4B63B2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B28923B7-53E8-491E-831C-F92AA7EC05FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B28923B7-53E8-491E-831C-F92AA7EC05FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B28923B7-53E8-491E-831C-F92AA7EC05FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B28923B7-53E8-491E-831C-F92AA7EC05FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94A4E98E-E4E8-4B0E-B495-CB2F98B876C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94A4E98E-E4E8-4B0E-B495-CB2F98B876C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94A4E98E-E4E8-4B0E-B495-CB2F98B876C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94A4E98E-E4E8-4B0E-B495-CB2F98B876C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64E43DC6-583D-4939-9C4B-DBA337CEDE6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64E43DC6-583D-4939-9C4B-DBA337CEDE6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64E43DC6-583D-4939-9C4B-DBA337CEDE6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64E43DC6-583D-4939-9C4B-DBA337CEDE6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD725382-C4A4-4AB4-99A7-333D587D63FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD725382-C4A4-4AB4-99A7-333D587D63FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD725382-C4A4-4AB4-99A7-333D587D63FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD725382-C4A4-4AB4-99A7-333D587D63FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

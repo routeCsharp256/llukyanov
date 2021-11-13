@@ -1,8 +1,8 @@
 namespace OzonEdu.MerchandiseService.Models
 {
-    public class MerchandiseItem
+    public class MerchItem
     {
-        public MerchandiseItem(long itemId, string itemName, int quantity)
+        public MerchItem(long itemId, string itemName, int quantity)
         {
             ItemId = itemId;
             ItemName = itemName;

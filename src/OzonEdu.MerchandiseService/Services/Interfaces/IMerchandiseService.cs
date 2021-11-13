@@ -7,7 +7,7 @@ namespace OzonEdu.MerchandiseService.Services.Interfaces
 {
     public interface IMerchandiseService
     {
-        Task<long> AskMerchandise(List<MerchandiseItem> merchandiseItems, CancellationToken _);
+        Task<long> AskMerchandise(List<MerchItem> merchandiseItems, CancellationToken _);
 
         Task<string> CheckMerchandise(long orderId, CancellationToken _);
     }
