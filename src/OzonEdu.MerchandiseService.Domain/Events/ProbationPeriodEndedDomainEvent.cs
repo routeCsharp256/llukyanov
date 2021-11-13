@@ -19,9 +19,10 @@ namespace OzonEdu.MerchandiseService.Domain.Events
                 new(
                     new Sku(1212),
                     new Name("Welcome to the Club twice!"),
+                    new Description("Описание2"),
                     new Item(MerchItemType.TShirt),
                     ClothingSize.M,
-                    new Quantity(1)
+                    new Quantity()
                 )
             };
         }

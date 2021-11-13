@@ -5,14 +5,14 @@ using ServiceStack;
 
 namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
 {
-    public class Name : ValueObject
+    public class Description : ValueObject
     {
-        public Name(string name)
+        public Description(string description)
         {
-            if (name.IsNullOrEmpty())
-                throw new ArgumentNullException("Merch item Name is not set");
+            if (description.IsNullOrEmpty())
+                throw new ArgumentNullException("Merch item Description is not set");
 
-            Value = name;
+            Value = description;
         }
 
         public string Value { get; }

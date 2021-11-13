@@ -20,7 +20,7 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
         /// <returns>Отметка, получал ли сотрудник мерч как слушатель конференции или нет</returns>
         Task<bool> IsEventMerchReceived(long employeeId, int? employeeEventTypeId, Sku sku, Quantity quantity,
             CancellationToken cancellationToken = default);
-        
+
         Task NotifyEmployeeAboutMerch(long employeeId, CancellationToken cancellationToken = default);
     }
 }

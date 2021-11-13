@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
+using OzonEdu.MerchandiseService.Domain.Exceptions;
 using OzonEdu.MerchandiseService.Domain.Models;
 
 namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
 {
     public class Quantity : ValueObject
     {
-        public Quantity()
+        public Quantity(int value = 1)
         {
-            Value = 1;
-        }
+            if (value < 0)
+                throw new NegativeValueException($"Merch item Quantity value is negative: {nameof(value)}");
 
-        public Quantity(int value)
-        {
             Value = value;
         }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.ValueObjects;
-using OzonEdu.MerchandiseService.Domain.Exceptions;
 using OzonEdu.MerchandiseService.Domain.Models;
 
 namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
@@ -9,27 +8,25 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
     {
         public MerchItem(Sku sku,
             Name name,
+            Description description,
             Item itemType,
             ClothingSize size,
             Quantity quantity)
         {
             Sku = sku;
             Name = name;
+            Description = description;
             ItemType = itemType;
+            Quantity = quantity;
             SetClothingSize(size);
-            SetQuantity(quantity);
         }
 
         public Sku Sku { get; }
-
         public Name Name { get; }
-
+        public Description Description { get; }
         public Item ItemType { get; }
-
         public ClothingSize ClothingSize { get; private set; }
-
-        public Quantity Quantity { get; private set; }
-
+        public Quantity Quantity { get; }
 
         public Tag Tag { get; set; }
 
@@ -47,12 +44,11 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
                 throw new ArgumentException($"Merch item with type {ItemType.Type.Name} cannot get size");
         }
 
-        private void SetQuantity(Quantity value)
-        {
-            if (value.Value < 0)
-                throw new NegativeValueException($"Merch item Quantity value is negative: {nameof(value)}");
-
-            Quantity = value;
-        }
+        // private void AddAllMerchItemsReceivedDomainEvent(Sku sku)
+        // {
+        //     var orderStartedDomainEvent = new ReachedMinimumStockItemsNumberDomainEvent(sku);
+        //
+        //     this.AddDomainEvent(orderStartedDomainEvent);
+        // }
     }
 }

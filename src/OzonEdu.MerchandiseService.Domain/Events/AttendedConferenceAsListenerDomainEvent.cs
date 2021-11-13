@@ -18,9 +18,10 @@ namespace OzonEdu.MerchandiseService.Domain.Events
                 new(
                     new Sku(124),
                     new Name("Спать нельзя записывать"),
+                    new Description("Lorem"),
                     new Item(MerchItemType.Notepad),
                     null,
-                    new Quantity(1)
+                    new Quantity()
                 )
             };
         }

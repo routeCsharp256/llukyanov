@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using MediatR;
+﻿using MediatR;
 using OzonEdu.MerchandiseService.Infrastructure.Handlers;
 
 namespace Microsoft.Extensions.DependencyInjection

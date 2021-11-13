@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using OzonEdu.MerchandiseService.Domain.Exceptions;
 using OzonEdu.MerchandiseService.Domain.Models;
+using OzonEdu.MerchandiseService.Domain.Tools;
+using ServiceStack;
 
 namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
 {
@@ -7,7 +11,12 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
     {
         public Email(string email)
         {
-            Value = email;
+            if (email.IsNullOrEmpty())
+                throw new ArgumentNullException("Email is not set");
+            if (!Regexes.OzonEmployeeEmailRegex.IsMatch(email))
+                throw new RegexException($"Email has wrong format: {email}");
+
+            Value = email.ToLower();
         }
 
         public string Value { get; }

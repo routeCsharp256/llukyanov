@@ -2,9 +2,6 @@
 using System.Threading.Tasks;
 using MediatR;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate;
-using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate;
-using OzonEdu.MerchandiseService.Domain.AggregationModels.ValueObjects;
-using OzonEdu.MerchandiseService.Infrastructure.Commands.AskMerch;
 using OzonEdu.MerchandiseService.Infrastructure.Commands.NotifyEmployee;
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Handlers

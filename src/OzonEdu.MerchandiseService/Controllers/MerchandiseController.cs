@@ -6,7 +6,6 @@ using OzonEdu.MerchandiseService.Infrastructure.Commands.AskMerch;
 using OzonEdu.MerchandiseService.Infrastructure.Commands.CheckMerch;
 using OzonEdu.MerchandiseService.Infrastructure.Commands.NotifyEmployee;
 using OzonEdu.MerchandiseService.Infrastructure.Commands.ReserveMerch;
-using OzonEdu.MerchandiseService.Services.Interfaces;
 
 namespace OzonEdu.MerchandiseService.Controllers
 {
@@ -72,9 +71,9 @@ namespace OzonEdu.MerchandiseService.Controllers
         [Route("notify")]
         public async Task<ActionResult> NotifyEmployeeAboutMerch(int employeeId, CancellationToken token)
         {
-            var notifyEmployeeRequest = new NotifyEmployeeRequest()   
+            var notifyEmployeeRequest = new NotifyEmployeeRequest
             {
-                EmployeeId = employeeId,
+                EmployeeId = employeeId
             };
             var result = await _mediator.Send(notifyEmployeeRequest, token);
 

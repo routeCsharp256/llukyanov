@@ -18,9 +18,10 @@ namespace OzonEdu.MerchandiseService.Domain.Events
                 new(
                     new Sku(1965),
                     new Name("Вещмешок"),
+                    new Description("Dolor"),
                     new Item(MerchItemType.Bag),
                     null,
-                    new Quantity(1)
+                    new Quantity()
                 )
             };
         }

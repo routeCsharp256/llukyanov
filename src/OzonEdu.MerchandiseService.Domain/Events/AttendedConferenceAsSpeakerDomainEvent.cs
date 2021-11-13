@@ -18,9 +18,10 @@ namespace OzonEdu.MerchandiseService.Domain.Events
                 new(
                     new Sku(3333),
                     new Name("Лет ми спик фром"),
+                    new Description("Ipsum"),
                     new Item(MerchItemType.Sweatshirt),
                     ClothingSize.XXL, // размер побольше, чтобы издалека было видно
-                    new Quantity(1)
+                    new Quantity()
                 )
             };
         }
