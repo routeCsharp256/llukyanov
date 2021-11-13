@@ -1,0 +1,40 @@
+syntax = "proto3";
+option csharp_namespace = "OzonEdu.MerchandiseService.Grpc";
+package MerchandiseService;
+
+import "google/protobuf/wrappers.proto";
+
+service MerchandiseServiceGrpc {
+  rpc AskMerchandise (AskMerchandiseRequest) returns (MerchandiseOrderIdResponse);
+  rpc CheckMerchandise (MerchandiseOrderIdRequest) returns (CheckMerchandiseResponse);
+}
+
+message AskMerchandiseRequestUnit {
+  int64 item_id = 1;
+  string item_name = 2;
+  int32 quantity = 3;
+}
+
+message AskMerchandiseRequest {
+  repeated AskMerchandiseRequestUnit merchandise_items = 1;
+}
+
+message MerchandiseOrderIdResponse {
+  google.protobuf.Int64Value order_id = 1;
+}
+
+message MerchandiseOrderIdRequest {
+  int64 order_id = 1;
+}
+
+message CheckMerchandiseResponse {
+  google.protobuf.StringValue order_status = 1;
+}
+
+enum OrderStatus {
+  DRAFT = 0;
+  REGISTERED = 1;
+  PENDING = 2;
+  READY = 3;
+  COMPLETED = 4;
+}
