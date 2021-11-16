@@ -1,33 +1,16 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.ValueObjects;
 
 namespace OzonEdu.MerchandiseService.Domain.Events
 {
-    /// <summary>
-    ///     Сотрудник прошёл испытательный срок
-    /// </summary>
     public class ProbationPeriodEndedDomainEvent : INotification
     {
-        public ProbationPeriodEndedDomainEvent()
+        public int EmployeeId { get; }
+        
+        public ProbationPeriodEndedDomainEvent(int employeeId)
         {
-            EmployeeEventType = EmployeeEventType.ProbationPeriodEnding;
-            MerchItems = new List<MerchItem>
-
-            {
-                new(
-                    new Sku(1212),
-                    new Name("Welcome to the Club twice!"),
-                    new Description("Описание2"),
-                    new Item(MerchItemType.TShirt),
-                    ClothingSize.M,
-                    new Quantity()
-                )
-            };
+            EmployeeId = employeeId;
         }
-
-        public EmployeeEventType EmployeeEventType { get; }
-        public List<MerchItem> MerchItems { get; }
     }
 }

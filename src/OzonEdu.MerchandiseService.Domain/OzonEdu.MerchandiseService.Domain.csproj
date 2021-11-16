@@ -5,12 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="9.0.0"/>
-        <PackageReference Include="ServiceStack.Text" Version="5.12.0"/>
+        <PackageReference Include="MediatR" Version="9.0.0" />
+        <PackageReference Include="ServiceStack.Text" Version="5.12.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\OzonEdu.Common.Domain.Models\OzonEdu.Common.Domain.Models.csproj"/>
+        <ProjectReference Include="..\OzonEdu.Common.Domain.Models\OzonEdu.Common.Domain.Models.csproj" />
     </ItemGroup>
 
 </Project>

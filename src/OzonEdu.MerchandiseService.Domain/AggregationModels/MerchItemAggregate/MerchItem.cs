@@ -1,5 +1,6 @@
 ﻿using System;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.ValueObjects;
+using OzonEdu.MerchandiseService.Domain.Events;
 using OzonEdu.MerchandiseService.Domain.Models;
 
 namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
@@ -44,11 +45,18 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
                 throw new ArgumentException($"Merch item with type {ItemType.Type.Name} cannot get size");
         }
 
-        // private void AddAllMerchItemsReceivedDomainEvent(Sku sku)
-        // {
-        //     var orderStartedDomainEvent = new ReachedMinimumStockItemsNumberDomainEvent(sku);
-        //
-        //     this.AddDomainEvent(orderStartedDomainEvent);
-        // }
+        private void AddMerchItemsReceivedDomainEvent(Sku sku, Quantity quantity)
+        {
+            var merchReceivedDomainEvent = new MerchItemsReceivedDomainEvent(sku, quantity);
+        
+            this.AddDomainEvent(merchReceivedDomainEvent);
+        }
+
+        private void AddMerchItemsReservedDomainEvent(Sku sku, Quantity quantity)
+        {
+            var merchReservedDomainEvent = new MerchItemsReservedDomainEvent(sku, quantity);
+        
+            this.AddDomainEvent(merchReservedDomainEvent);
+        }
     }
 }

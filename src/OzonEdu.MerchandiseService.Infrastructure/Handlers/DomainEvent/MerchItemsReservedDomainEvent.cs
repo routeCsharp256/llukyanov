@@ -6,9 +6,9 @@ using OzonEdu.MerchandiseService.Domain.Events;
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
 {
-    public class AttendedConferenceAsListenerDomainEventHandler : INotificationHandler<AttendedConferenceAsListenerDomainEvent>
+    public class MerchItemsReservedDomainEventHandler : INotificationHandler<MerchItemsReservedDomainEvent>
     {
-        public Task Handle(AttendedConferenceAsListenerDomainEvent notification, CancellationToken cancellationToken)
+        public Task Handle(MerchItemsReservedDomainEvent notification, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

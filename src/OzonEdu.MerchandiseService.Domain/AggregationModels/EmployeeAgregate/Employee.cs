@@ -1,4 +1,5 @@
-﻿using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAgregate;
+﻿using System;
+using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAgregate;
 using OzonEdu.MerchandiseService.Domain.Events;
 using OzonEdu.MerchandiseService.Domain.Models;
 
@@ -6,6 +7,11 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
 {
     public class Employee : Entity
     {
+        // TODO: вообще лучше смотреть не по дням, а по месяцам/годам
+        private int DaysToVeteran { get; } = 1500;
+        
+        private int ProbationPeriod { get; } = 90;
+            
         public Employee(
             int id,
             Name firstName,
@@ -32,39 +38,72 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
         public Date HiringDate { get; }
         public Email Email { get; }
 
-        private void AddAttendedConferenceAsListenerDomainEvent()
-        {
-            var attendedConferenceAsListenerDomainEvent = new AttendedConferenceAsListenerDomainEvent();
 
-            AddDomainEvent(attendedConferenceAsListenerDomainEvent);
+        // только не совсем понял, как эти проверки должны вызываться...
+        public void CheckVeteran()
+        {
+            if (DateTime.Now.Subtract(HiringDate.Value).Days >= DaysToVeteran)
+                AddBecameVeteranDomainEvent(Id);
+        }
+        
+        public void CheckProbationPeriod()
+        {
+            if (DateTime.Now.Subtract(HiringDate.Value).Days >= ProbationPeriod)
+                AddProbationPeriodEndedDomainEvent(Id);
+        }
+        
+        public void CheckConferenceAsListener()
+        {
+            // 1. получаем конференции методом /api/conferences/getall
+            // 2. (не нашёл в доках API, как получить конференций и для сотрудника, а также статус - слушатель или говоритель)
+            ///// видимо, тогда лезем в БД и достаём это всё
+        }
+        
+        public void CheckConferenceAsSpeaker()
+        {
+            // 1. получаем конференции методом /api/conferences/getall
+            // 2. (не нашёл в доках API, как получить конференций и для сотрудника, а также статус - слушатель или говоритель)
+            ///// видимо, тогда лезем в БД и достаём это всё
+        }
+        
+        public void SetHired()
+        {
+            AddHiredDomainEvent(Id); 
         }
 
-        private void AddAttendedConferenceAsSpeakerDomainEvent()
+        private void AddAttendedConferenceAsListenerDomainEvent(int employeeId)
         {
-            var attendedConferenceAsSpeakerDomainEvent = new AttendedConferenceAsSpeakerDomainEvent();
+            var attendedConferenceAsListenerDomainEvent = new AttendedConferenceAsListenerDomainEvent(employeeId);
 
-            AddDomainEvent(attendedConferenceAsSpeakerDomainEvent);
+            this.AddDomainEvent(attendedConferenceAsListenerDomainEvent);
         }
 
-        private void AddBecameVeteranDomainEvent()
+        private void AddAttendedConferenceAsSpeakerDomainEvent(int employeeId)
         {
-            var becameVeteranDomainEvent = new BecameVeteranDomainEvent();
+            var attendedConferenceAsSpeakerDomainEvent = new AttendedConferenceAsSpeakerDomainEvent(employeeId);
 
-            AddDomainEvent(becameVeteranDomainEvent);
+            this.AddDomainEvent(attendedConferenceAsSpeakerDomainEvent);
         }
 
-        private void AddHiredDomainEvent()
+        private void AddBecameVeteranDomainEvent(int employeeId)
         {
-            var hiredDomainEvent = new HiredDomainEvent();
+            var becameVeteranDomainEvent = new BecameVeteranDomainEvent(employeeId);
 
-            AddDomainEvent(hiredDomainEvent);
+            this.AddDomainEvent(becameVeteranDomainEvent);
         }
 
-        private void AddProbationPeriodEndedDomainEvent()
+        private void AddHiredDomainEvent(int employeeId)
         {
-            var probationPeriodEndedDomainEvent = new ProbationPeriodEndedDomainEvent();
+            var hiredDomainEvent = new HiredDomainEvent(employeeId);
 
-            AddDomainEvent(probationPeriodEndedDomainEvent);
+            this.AddDomainEvent(hiredDomainEvent);
+        }
+
+        private void AddProbationPeriodEndedDomainEvent(int employeeId)
+        {
+            var probationPeriodEndedDomainEvent = new ProbationPeriodEndedDomainEvent(employeeId);
+
+            this.AddDomainEvent(probationPeriodEndedDomainEvent);
         }
     }
 }

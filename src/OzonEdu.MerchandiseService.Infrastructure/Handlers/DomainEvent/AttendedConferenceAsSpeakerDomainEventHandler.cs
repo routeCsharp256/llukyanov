@@ -6,8 +6,7 @@ using OzonEdu.MerchandiseService.Domain.Events;
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
 {
-    public class
-        AttendedConferenceAsSpeakerDomainEventHandler : INotificationHandler<AttendedConferenceAsSpeakerDomainEvent>
+    public class AttendedConferenceAsSpeakerDomainEventHandler : INotificationHandler<AttendedConferenceAsSpeakerDomainEvent>
     {
         public Task Handle(AttendedConferenceAsSpeakerDomainEvent notification, CancellationToken cancellationToken)
         {

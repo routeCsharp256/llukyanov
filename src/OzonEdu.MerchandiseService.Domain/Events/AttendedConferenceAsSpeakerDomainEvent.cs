@@ -1,32 +1,18 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.ValueObjects;
 
 namespace OzonEdu.MerchandiseService.Domain.Events
 {
-    /// <summary>
-    ///     Сотрудник посетил конференцию в качестве спикера
-    /// </summary>
     public class AttendedConferenceAsSpeakerDomainEvent : INotification
     {
-        public AttendedConferenceAsSpeakerDomainEvent()
+        public int EmployeeId { get; }
+        public bool IsSpeaker { get; }
+        
+        public AttendedConferenceAsSpeakerDomainEvent(int employeeId)
         {
-            EmployeeEventType = EmployeeEventType.ConferenceAttendanceAsSpeaker;
-            MerchItems = new List<MerchItem>
-            {
-                new(
-                    new Sku(3333),
-                    new Name("Лет ми спик фром"),
-                    new Description("Ipsum"),
-                    new Item(MerchItemType.Sweatshirt),
-                    ClothingSize.XXL, // размер побольше, чтобы издалека было видно
-                    new Quantity()
-                )
-            };
+            EmployeeId = employeeId;
+            IsSpeaker = true;
         }
-
-        public EmployeeEventType EmployeeEventType { get; }
-        public List<MerchItem> MerchItems { get; }
     }
 }
