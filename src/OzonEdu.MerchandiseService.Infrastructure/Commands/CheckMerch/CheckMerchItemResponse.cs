@@ -1,8 +1,10 @@
-﻿namespace OzonEdu.MerchandiseService.Infrastructure.Commands.CheckMerch
+﻿using System.Collections.Generic;
+using OzonEdu.MerchandiseService.Infrastructure.Models;
+
+namespace OzonEdu.MerchandiseService.Infrastructure.Commands.CheckMerch
 {
     public class CheckMerchItemResponse
     {
-        public long Sku { get; init; }
-        public int Quantity { get; init; }
+        public IReadOnlyList<StockItemDto> StockItemsAvailable { get; init; }
     }
 }

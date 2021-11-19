@@ -1,7 +1,5 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate;
-using OzonEdu.MerchandiseService.Domain.AggregationModels.ValueObjects;
 using OzonEdu.MerchandiseService.Domain.Contracts;
 
 namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
@@ -15,12 +13,14 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
         ///     Проверка, получал ли сотрудник мерч в честь какого-то события
         /// </summary>
         /// <param name="employeeId">Идентификатор сотрудника</param>
-        /// <param name="conferenceId">Идентификатор конференции</param>
+        /// <param name="employeeEventTypeId">Идентификатор типа события</param>
         /// <param name="cancellationToken">Токен для отмены операции.<see cref="CancellationToken" /></param>
-        /// <returns>Отметка, получал ли сотрудник мерч как слушатель конференции или нет</returns>
-        Task<bool> IsEventMerchReceived(long employeeId, int? employeeEventTypeId, Sku sku, Quantity quantity,
+        /// <returns>Можно ли сотруднику выдавать мерч всвязи с данным событием</returns>
+        Task<bool> CheckIsEventMerchReceived(long employeeId, int employeeEventTypeId, 
             CancellationToken cancellationToken = default);
 
         Task NotifyEmployeeAboutMerch(long employeeId, CancellationToken cancellationToken = default);
+
+        Task UpdateConferencesInfo(CancellationToken cancellationToken = default);
     }
 }

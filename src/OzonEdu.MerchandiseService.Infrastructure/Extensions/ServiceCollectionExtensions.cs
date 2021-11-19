@@ -15,15 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>Объект <see cref="IServiceCollection" /></returns>
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
-            // services.AddMediatR(typeof(AttendedConferenceAsListenerDomainEventHandler));
-            // services.AddMediatR(typeof(AttendedConferenceAsSpeakerDomainEventHandler));
-            // services.AddMediatR(typeof(BecameVeteranDomainEventHandler));
-            // services.AddMediatR(typeof(HiredDomainEventHandler));
-            // services.AddMediatR(typeof(ProbationPeriodEndedDomainEventHandler));
-            services.AddMediatR(typeof(AskMerchCommandHandler).Assembly);
-            // services.AddMediatR(typeof(CheckMerchCommandHandler));
-            // services.AddMediatR(typeof(NotifyEmployeeCommandHandler));
-            // services.AddMediatR(typeof(ReserveMerchCommandHandler));
+            services.AddMediatR(typeof(MerchOrderClosedDomainEventHandler).Assembly);
 
             return services;
         }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -22,45 +23,12 @@ namespace OzonEdu.MerchandiseService.Controllers
         }
 
         [HttpPost]
-        [Route("ask")]
-        public async Task<ActionResult<AskMerchItemResponse>> AskMerch(int employeeId, long merchItemSku,
-            int quantity, int employeeEventTypeId, CancellationToken token)
-        {
-            var askMerchRequest = new AskMerchItemRequest
-            {
-                EmployeeId = employeeId,
-                Sku = merchItemSku,
-                Quantity = quantity,
-                EmployeeEventTypeId = employeeEventTypeId
-            };
-            var result = await _mediator.Send(askMerchRequest, token);
-
-            return Ok(result);
-        }
-
-        [HttpGet]
-        [Route("check")]
-        public async Task<ActionResult<CheckMerchItemResponse>> CheckMerch(long sku, int quantity,
-            CancellationToken token)
-        {
-            var checkMerchRequest = new CheckMerchItemRequest
-            {
-                Sku = sku,
-                Quantity = quantity
-            };
-            var result = await _mediator.Send(checkMerchRequest, token);
-
-            return Ok(result);
-        }
-
-        [HttpPost]
         [Route("reserve")]
-        public async Task<ActionResult> ReserveMerch(long sku, int quantity, CancellationToken token)
+        public async Task<ActionResult> ReserveMerch(long merchOrderId, List<long> skus, CancellationToken token)
         {
-            var reserveMerchRequest = new ReserveMerchItemRequest
+            var reserveMerchRequest = new ReserveMerchItemsRequest()
             {
-                Sku = sku,
-                Quantity = quantity
+                MerchOrderId = merchOrderId,
             };
             var result = await _mediator.Send(reserveMerchRequest, token);
 
@@ -69,7 +37,7 @@ namespace OzonEdu.MerchandiseService.Controllers
 
         [HttpPost]
         [Route("notify")]
-        public async Task<ActionResult> NotifyEmployeeAboutMerch(int employeeId, CancellationToken token)
+        public async Task<ActionResult> NotifyEmployeeAboutMerch(long employeeId, CancellationToken token)
         {
             var notifyEmployeeRequest = new NotifyEmployeeRequest
             {

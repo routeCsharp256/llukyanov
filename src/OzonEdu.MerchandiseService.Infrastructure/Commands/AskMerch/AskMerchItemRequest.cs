@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using MediatR;
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Commands.AskMerch
 {
@@ -6,7 +7,6 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Commands.AskMerch
     {
         public int EmployeeId { get; init; }
         public int? EmployeeEventTypeId { get; init; }
-        public long Sku { get; init; }
-        public int Quantity { get; init; }
+        public IReadOnlyList<long> Skus { get; init; }
     }
 }

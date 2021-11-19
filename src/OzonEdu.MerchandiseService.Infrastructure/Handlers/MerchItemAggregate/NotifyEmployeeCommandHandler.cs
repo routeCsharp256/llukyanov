@@ -15,8 +15,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<Unit> Handle(NotifyEmployeeRequest itemRequest,
-            CancellationToken cancellationToken)
+        public async Task<Unit> Handle(NotifyEmployeeRequest itemRequest, CancellationToken cancellationToken)
         {
             await _employeeRepository.NotifyEmployeeAboutMerch(itemRequest.EmployeeId);
             return Unit.Value;
