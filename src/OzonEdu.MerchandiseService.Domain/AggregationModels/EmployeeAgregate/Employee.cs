@@ -17,11 +17,11 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
         }
 
         public int Id { get; }
-        
+
         public FullName FullName { get; }
-        
+
         public Department Department { get; }
-        
+
         public Email Email { get; }
     }
 }

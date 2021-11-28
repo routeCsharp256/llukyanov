@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate;
-using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchOrderAggregate;
+using OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate;
 using OzonEdu.MerchandiseService.Domain.Contracts;
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
@@ -18,6 +18,12 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
         }
 
         public Task<MerchItem> UpdateAsync(MerchItem itemToUpdate, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<long>> ReserveMerchItem(long sku, int quantity,
+            CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

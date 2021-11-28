@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>Объект <see cref="IServiceCollection" /></returns>
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
-            services.AddMediatR(typeof(MerchOrderClosedDomainEventHandler).Assembly);
+            services.AddMediatR(typeof(OrderPreparedDomainEventHandler).Assembly);
 
             return services;
         }

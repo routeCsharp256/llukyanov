@@ -13,9 +13,9 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
         }
 
         public string FirstName { get; }
-        
+
         public string LastName { get; }
-        
+
         public string MiddleName { get; }
 
         protected override IEnumerable<object> GetEqualityComponents()

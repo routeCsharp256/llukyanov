@@ -13,7 +13,9 @@ namespace OzonEdu.MerchandiseService.Migrator.Migrations
             Execute.Sql(@"
                 CREATE TABLE if not exists Employee(
                     id INT PRIMARY KEY,
-                    full_name CHARACTER VARYING(255) NOT NULL,
+                    first_name CHARACTER VARYING(127) NOT NULL,
+                    last_name CHARACTER VARYING(127) NOT NULL,
+                    middle_name CHARACTER VARYING(127) NOT NULL,
                     department CHARACTER VARYING(255) NOT NULL,
                     email CHARACTER VARYING(127) NOT NULL);"
             );

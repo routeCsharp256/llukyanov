@@ -12,15 +12,20 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
         /// <summary>
         ///     Проверка, получал ли сотрудник мерч в честь какого-то события
         /// </summary>
-        /// <param name="employeeId">Идентификатор сотрудника</param>
-        /// <param name="employeeEventTypeId">Идентификатор типа события</param>
-        /// <param name="cancellationToken">Токен для отмены операции.<see cref="CancellationToken" /></param>
-        /// <returns>Можно ли сотруднику выдавать мерч всвязи с данным событием</returns>
-        Task<bool> CheckIsEventMerchReceived(long employeeId, int employeeEventTypeId, 
+        /// <param name="employeeEmail">Email сотрудника</param>
+        /// <param name="employeeEventId">ID события, связанного с сотрудником</param>
+        /// <param name="merchPackId">ID мерч-пака</param>
+        /// <param name="cancellationToken">Токен для отмены операции<see cref="CancellationToken" /></param>
+        /// <returns></returns>
+        Task<bool> CheckIsMerchPackReceivedAsync(string employeeEmail, int employeeEventId, int merchPackId,
             CancellationToken cancellationToken = default);
 
-        Task NotifyEmployeeAboutMerch(long employeeId, CancellationToken cancellationToken = default);
-
-        Task UpdateConferencesInfo(CancellationToken cancellationToken = default);
+        /// <summary>
+        ///     Отправка сообщения сотруднику о подготовленном заказе мерча
+        /// </summary>
+        /// <param name="employeeEmail">Email сотрудника</param>
+        /// <param name="cancellationToken">Токен для отмены операции<see cref="CancellationToken" /></param>
+        /// <returns></returns>
+        Task NotifyEmployeeAboutMerchAsync(string employeeEmail, CancellationToken cancellationToken = default);
     }
 }

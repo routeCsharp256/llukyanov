@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using OzonEdu.MerchandiseService.Infrastructure.Models;
+﻿using System.Threading.Tasks;
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Mocks
 {

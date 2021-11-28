@@ -11,20 +11,20 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Mocks
         {
             var result = new List<ConferenceMock>
             {
-                new ConferenceMock
+                new()
                 {
                     Id = 1,
                     Date = Convert.ToDateTime("2020-01-02"),
                     Description = "this conference is passed",
                     Name = "conf#1"
                 },
-                new ConferenceMock
+                new()
                 {
                     Id = 2,
                     Date = Convert.ToDateTime("2022-01-02"),
                     Description = "that conference will be soon...",
                     Name = "conf#22"
-                },
+                }
             };
             return result;
         }

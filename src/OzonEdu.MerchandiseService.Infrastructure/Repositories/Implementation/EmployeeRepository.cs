@@ -4,6 +4,7 @@ using Dapper;
 using Npgsql;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate;
 using OzonEdu.MerchandiseService.Domain.Contracts;
+using OzonEdu.MerchandiseService.Infrastructure.Models;
 using OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure.Interfaces;
 using OzonEdu.MerchandiseService.Infrastructure.Repositories.Mocks;
 
@@ -11,12 +12,12 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly IDbConnectionFactory<NpgsqlConnection> _dbConnectionFactory;
-        private readonly IChangeTracker _changeTracker;
         private const int Timeout = 5;
-        
-        private readonly IEmployeeServiceRepository _employeeServiceRepository;
+        private readonly IChangeTracker _changeTracker;
+        private readonly IDbConnectionFactory<NpgsqlConnection> _dbConnectionFactory;
         private readonly IEmailingServiceRepository _emailingServiceRepository;
+
+        private readonly IEmployeeServiceRepository _employeeServiceRepository;
 
         public IUnitOfWork UnitOfWork { get; }
 
@@ -28,14 +29,14 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
 
             var parameters = new
             {
-                Id = itemToCreate.Id,
+                itemToCreate.Id,
                 FullName = $"{itemToCreate.FullName.LastName} {itemToCreate.FullName.FirstName}",
                 Department = itemToCreate.Department.Value,
-                Email = itemToCreate.Email.Value,
+                Email = itemToCreate.Email.Value
             };
             var commandDefinition = new CommandDefinition(
                 query,
-                parameters: parameters,
+                parameters,
                 commandTimeout: Timeout,
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
@@ -50,18 +51,19 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
                 UPDATE Employee 
                 SET full_name = @FullName, 
                     department = @Department, 
-                    email = @Email,
-                VALUES (@FullName, @Department, @Email);";
+                    email = @Email
+                WHERE id = @EmployeeId;";
 
             var parameters = new
             {
+                EmployeeId = itemToUpdate.Id,
                 FullName = $"{itemToUpdate.FullName.LastName} {itemToUpdate.FullName.FirstName}",
                 Department = itemToUpdate.Department.Value,
-                Email = itemToUpdate.Email.Value,
+                Email = itemToUpdate.Email.Value
             };
             var commandDefinition = new CommandDefinition(
                 query,
-                parameters: parameters,
+                parameters,
                 commandTimeout: Timeout,
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
@@ -70,91 +72,72 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
             return itemToUpdate;
         }
 
-        public async Task<bool> CheckIsEventMerchReceived(long employeeId, int employeeEventId, 
+        // REMARK
+        // здесь считаем, что из Кафки мы получаем и ID мерч-пака, и ID события для сотрудника (так описано в описании)
+        // то есть нам остаётся только проверить, не выдавался ли уже такой мерч-пак
+        public async Task<bool> CheckIsMerchPackReceivedAsync(string employeeEmail, int employeeEventId,
+            int merchPackId, CancellationToken cancellationToken = default)
+        {
+            // TODO: добавить проверку дедлайна, если дедлайн прошёл И событие НЕ коференция, то считаем, что заказ не выполнен, и его можно создать заново, но отсылаем пометку, что заказ просрочен
+            // : если дедлайн прошёл И событие конференция, то заказ просрочен, и новый заказ мы не выдаём
+            const string query = @"
+                SELECT EXISTS (
+                    SELECT TRUE
+                    FROM Order o
+                    JOIN MerchPack mp ON mp.id = o.merch_pack_id
+                    JOIN Employee e ON e.id = o.employee_id
+                    WHERE e.email = @EmployeeEmail 
+                        AND mp.employee_event_id = @EmployeeEventId
+                        AND o.id = @MerchPackId
+                );";
+
+            var parameters = new
+            {
+                EmployeeEmail = employeeEmail,
+                EmployeeEventId = employeeEventId,
+                MerchPackId = merchPackId
+            };
+            var commandDefinition = new CommandDefinition(
+                query,
+                parameters,
+                commandTimeout: Timeout,
+                cancellationToken: cancellationToken);
+            var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
+
+            var result = await connection.QuerySingleAsync<bool>(commandDefinition);
+            return result;
+        }
+
+        public async Task NotifyEmployeeAboutMerchAsync(string employeeEmail,
             CancellationToken cancellationToken = default)
         {
-            var allConferences = await _employeeServiceRepository.GetAllConferences();
-            
-            // запрос, если эвент - НЕ конференция
             const string query = @"
-                SELECT COUNT(1) 
-                FROM MerchOrder o
-                JOIN MerchPack p ON p.id = o.merch_pack_id
-                WHERE employee_id = @EmployeeId
-                    AND p.employee_event_id = @EmployeeEventId
-                    AND p.is_conference = FALSE;";
-            
-            // TODO:
-                // запрос, если эвент - конференция
-                // заранее загружаем в БД мерч-сервиса список всех конференций и сотрудников
-                // которые привязаны к конференциям
-            // const string query2 = @"
-            //     SELECT COUNT(1) 
-            //     FROM MerchOrder o
-            //     JOIN MerchPack p ON p.id = o.merch_pack_id
-            //     LEFT JOIN EmployeeConference ec ON ec.employee_id = o.employee_id
-            //     LEFT JOIN Conference c ON c.id = ec.conference_id
-            //     WHERE employee_id = @EmployeeId
-            //         AND p.employee_event_id = @EmployeeEventId
-            //         AND p.is_conference = FALSE;";
+                SELECT id
+                    ,first_name
+                    ,last_name
+                    ,middle_name
+                    ,department
+                    ,email
+                FROM Employee
+                WHERE email = @EmployeeEmail;";
 
             var parameters = new
             {
-                EmployeeId = employeeId,
-                EmployeeEventId = employeeEventId,
+                EmployeeEmail = employeeEmail
             };
             var commandDefinition = new CommandDefinition(
                 query,
-                parameters: parameters,
+                parameters,
                 commandTimeout: Timeout,
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
+            var result = await connection.QuerySingleOrDefaultAsync<EmployeeDto>(commandDefinition);
 
-            var result = await connection.QuerySingleAsync<int>(commandDefinition);
-            return result <= 0;
-        }
-
-        public async Task UpdateConferencesInfo(CancellationToken cancellationToken = default)
-        {
-            var allConferences = await _employeeServiceRepository.GetAllConferences();
-            var query = @"
-                TRUNCATE TABLE Conference;
- 
-                INSERT INTO Conference (id, name, date, description)
-                VALUES
-                (1, 'conf#1', '2020-01-02', 'this conference is passed'),
-                (2, 'conf#22', '2022-01-02', 'that conference will be soon...');";
-            
-            var commandDefinition = new CommandDefinition(
-                query,
-                commandTimeout: Timeout,
-                cancellationToken: cancellationToken);
-            var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
-            await connection.ExecuteAsync(commandDefinition);
-        }
-
-        public async Task NotifyEmployeeAboutMerch(long employeeId, CancellationToken cancellationToken = default)
-        {
-            const string getEmailquery = @"
-                SELECT email
-                FROM Employee 
-                WHERE id = @EmployeeId;";
-            var parameters = new
-            {
-                EmployeeId = employeeId,
-            };
-            var commandDefinition = new CommandDefinition(
-                getEmailquery,
-                parameters: parameters,
-                commandTimeout: Timeout,
-                cancellationToken: cancellationToken);
-            var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
-            
-            var email = await connection.QuerySingleOrDefaultAsync(commandDefinition);
             var subject = "[MerchandiseService] Заберите ваши подарки!";
-            var text = "Мерч по случаю <вставить_нужное> готов! Чтобы получить его, поднимитесь на этаж, прямо по коридуру, налево, направо, снова налево, спуститесь и поднимитесь.";
-            
-            _emailingServiceRepository.SendMailSingle(email, subject, text);
+            var text =
+                "Мерч по случаю <вставить_нужное> готов! Чтобы получить его, поднимитесь на этаж, прямо по коридуру, налево, направо, снова налево, спуститесь и поднимитесь.";
+
+            await _emailingServiceRepository.SendMailSingle(employeeEmail, subject, text);
         }
     }
 }

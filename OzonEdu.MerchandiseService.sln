@@ -8,6 +8,8 @@ ProjectSection(SolutionItems) = preProject
 	Dockerfile = Dockerfile
 	README.md = README.md
 	merchandise-service_bounded_context.drawio = merchandise-service_bounded_context.drawio
+	entrypoint.sh = entrypoint.sh
+	docker-compose.yml = docker-compose.yml
 EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{D766BBDB-6C12-458D-BF57-EA1B8B1E2319}"

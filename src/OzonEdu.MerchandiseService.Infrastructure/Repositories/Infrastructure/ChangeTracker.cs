@@ -1,15 +1,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using OzonEdu.MerchandiseService.Domain.Models;
-using OzonEdu.MerchandiseService.Infrastructure.Repositories;
 using OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure.Interfaces;
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure
 {
     public class ChangeTracker : IChangeTracker
     {
-        public IEnumerable<Entity> TrackedEntities => _usedEntitiesBackingField.ToArray();
-
         // Можно заменить на любую другую имплементацию. Не только через ConcurrentBag
         private readonly ConcurrentBag<Entity> _usedEntitiesBackingField;
 
@@ -17,7 +14,9 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure
         {
             _usedEntitiesBackingField = new ConcurrentBag<Entity>();
         }
-        
+
+        public IEnumerable<Entity> TrackedEntities => _usedEntitiesBackingField.ToArray();
+
         public void Track(Entity entity)
         {
             _usedEntitiesBackingField.Add(entity);

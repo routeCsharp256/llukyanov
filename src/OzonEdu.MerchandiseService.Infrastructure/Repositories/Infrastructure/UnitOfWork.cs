@@ -11,13 +11,13 @@ using OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure.Inte
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IDisposable
     {
-        private NpgsqlTransaction _npgsqlTransaction;
-        
-        private readonly IDbConnectionFactory<NpgsqlConnection> _dbConnectionFactory = null;
-        private readonly IPublisher _publisher;
         private readonly IChangeTracker _changeTracker;
+
+        private readonly IDbConnectionFactory<NpgsqlConnection> _dbConnectionFactory;
+        private readonly IPublisher _publisher;
+        private NpgsqlTransaction _npgsqlTransaction;
 
         public UnitOfWork(
             IDbConnectionFactory<NpgsqlConnection> dbConnectionFactory,
@@ -29,22 +29,32 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure
             _changeTracker = changeTracker;
         }
 
+        void IDisposable.Dispose()
+        {
+            _npgsqlTransaction?.Dispose();
+            _dbConnectionFactory?.Dispose();
+        }
+
+        public Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<int> IUnitOfWork.SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public async ValueTask StartTransaction(CancellationToken token)
         {
-            if (_npgsqlTransaction is not null)
-            {
-                return;
-            }
+            if (_npgsqlTransaction is not null) return;
             var connection = await _dbConnectionFactory.CreateConnection(token);
             _npgsqlTransaction = await connection.BeginTransactionAsync(token);
         }
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
-            if (_npgsqlTransaction is null)
-            {
-                throw new NoActiveTransactionStartedException();
-            }
+            if (_npgsqlTransaction is null) throw new NoActiveTransactionStartedException();
 
             var domainEvents = new Queue<INotification>(
                 _changeTracker.TrackedEntities
@@ -56,27 +66,9 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure
                     }));
             // Можно отправлять все и сразу через Task.WhenAll.
             while (domainEvents.TryDequeue(out var notification))
-            {
                 await _publisher.Publish(notification, cancellationToken);
-            }
 
             await _npgsqlTransaction.CommitAsync(cancellationToken);
-        }
-
-        public Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        void IDisposable.Dispose()
-        {
-            _npgsqlTransaction?.Dispose();
-            _dbConnectionFactory?.Dispose();
-        }
-
-        Task<int> IUnitOfWork.SaveChangesAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }

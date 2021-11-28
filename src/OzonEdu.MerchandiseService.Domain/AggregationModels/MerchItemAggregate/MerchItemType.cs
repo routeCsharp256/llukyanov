@@ -11,6 +11,8 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
         public static MerchItemType Pen = new(5, nameof(Pen));
         public static MerchItemType Socks = new(6, nameof(Socks));
 
-        public MerchItemType(int id, string name) : base(id, name) { }
+        public MerchItemType(int id, string name) : base(id, name)
+        {
+        }
     }
 }
