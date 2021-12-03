@@ -7,7 +7,7 @@
 
     public enum Status
     {
-        Draft = 1,
+        Draft = 0,
         Registered,
         Pending,
         Ready,

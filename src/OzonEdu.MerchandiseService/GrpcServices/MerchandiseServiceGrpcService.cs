@@ -20,7 +20,7 @@ namespace OzonEdu.MerchandiseService.GrpcServices
             ServerCallContext context)
         {
             var merchItems = request.MerchandiseItems
-                .Select(item => new MerchItem(item.ItemId, item.ItemName, item.Quantity)).ToList();
+                .Select(item => new MerchandiseItem(item.ItemId, item.ItemName, item.Quantity)).ToList();
             return new MerchandiseOrderIdResponse
             {
                 OrderId = await _merchandiseService.AskMerchandise(merchItems, context.CancellationToken)
