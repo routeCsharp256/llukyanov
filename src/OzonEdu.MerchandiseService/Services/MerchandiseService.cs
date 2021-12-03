@@ -8,7 +8,7 @@ namespace OzonEdu.MerchandiseService.Services
 {
     public class MerchandiseService : IMerchandiseService
     {
-        public Task<long> AskMerchandise(List<MerchandiseItem> merchandiseItems, CancellationToken _)
+        public Task<long> AskMerchandise(List<MerchItem> merchandiseItems, CancellationToken _)
         {
             return Task.FromResult((long) 227);
         }
