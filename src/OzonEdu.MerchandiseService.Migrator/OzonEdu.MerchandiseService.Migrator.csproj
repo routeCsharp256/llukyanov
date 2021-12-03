@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentMigrator" Version="3.3.1"/>
+        <PackageReference Include="FluentMigrator.Runner" Version="3.3.1"/>
+        <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.3.1"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0"/>
+        <PackageReference Include="Npgsql" Version="6.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Dict"/>
+        <Folder Include="Entities"/>
+        <Folder Include="Support"/>
+    </ItemGroup>
+
+</Project>
