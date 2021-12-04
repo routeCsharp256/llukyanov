@@ -42,7 +42,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
                     ,deadline
                     ,is_employee_received_order)
                 VALUES (@EmployeeEmail
-                    ,@SkusRequested
+                    ,@MerchItemSkus
                     ,null
                     ,@MerchPackId
                     ,@Status

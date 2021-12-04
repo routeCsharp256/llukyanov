@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate;
+using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAgregate;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate;
 using OzonEdu.MerchandiseService.Domain.Events;
 using OzonEdu.MerchandiseService.Domain.Models;
@@ -14,17 +15,21 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
             string employeeEmail,
             List<long> skusRequested,
             int? merchPackId,
-            OrderPriority priority)
+            OrderPriority priority, 
+            NullableDate deadline)
         {
+            var createdAt = DateTime.Now;
+            
             EmployeeEmail = new Email(employeeEmail);
             SkusRequested = skusRequested.Select(sku => new Sku(sku)).ToList();
             MerchPackId = merchPackId;
             Priority = priority;
+            Deadline = deadline;
 
             Status = OrderStatus.New;
-            CreatedAt = new NullableDate(DateTime.Now);
+            CreatedAt = createdAt;
 
-            AddOrderCreatedDomainEvent();
+            AddOrderStatusChangedDomainEvent(OrderStatus.New, createdAt);
         }
 
         public long Id { get; }
@@ -35,8 +40,6 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
 
         /// <summary>
         ///     Список товаров, зарезервированных для выдачи.
-        ///     Резерв может быть снят только если заказ будет отменён (Status = Cancelled)
-        ///     или когда сотрудник забрал заказ
         /// </summary>
         public List<Sku> SkusReserved { get; } = new();
 
@@ -46,16 +49,19 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
 
         public OrderPriority Priority { get; }
 
-        public NullableDate CreatedAt { get; }
+        public DateTime CreatedAt { get; }
 
-        public NullableDate ClosedAt { get; set; }
+        public NullableDate ClosedAt { get; private set; }
 
         /// <summary>
         ///     Заполняется, если набор мерча нужно выдать не позднее какой-то даты (например, перед конференцией)
         /// </summary>
         public NullableDate Deadline { get; }
 
-        public int? ManagerId { get; set; } // id менеджера, с которым можно связаться по статусу заказа
+        /// <summary>
+        ///     id менеджера, с которым можно связаться по статусу заказа
+        /// </summary>
+        public int? ManagerId { get; private set; }
 
         public bool IsEmployeeReceivedOrder { get; private set; }
 
@@ -65,15 +71,13 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
             if (Status.Equals(OrderStatus.New) && ManagerId is not null)
             {
                 Status = OrderStatus.Active;
-                AddOrderActiveDomainEvent();
-                AddOrderStatusChangedDomainEvent(OrderStatus.Active);
+                AddOrderStatusChangedDomainEvent(OrderStatus.Active, DateTime.Now);
             }
 
             if (Status.Equals(OrderStatus.Active) && SkusRequested.SequenceEqual(SkusReserved))
             {
                 Status = OrderStatus.Prepared;
-                AddOrderPreparedDomainEvent();
-                AddOrderStatusChangedDomainEvent(OrderStatus.Prepared);
+                AddOrderStatusChangedDomainEvent(OrderStatus.Prepared, DateTime.Now);
             }
 
             if (Status.Equals(OrderStatus.Prepared) && IsEmployeeReceivedOrder)
@@ -81,19 +85,24 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
                 ClosedAt = new NullableDate(DateTime.Now);
 
                 Status = OrderStatus.Closed;
-                AddOrderStatusChangedDomainEvent(OrderStatus.Closed);
+                AddOrderStatusChangedDomainEvent(OrderStatus.Closed, DateTime.Now);
             }
         }
 
         public void CancelOrder()
         {
             Status = OrderStatus.Cancelled;
-            AddOrderCancelledDomainEvent();
+            AddOrderStatusChangedDomainEvent(OrderStatus.Cancelled, DateTime.Now);
         }
 
         public void SetOrderReceivedByEmployee()
         {
             IsEmployeeReceivedOrder = true;
+        }
+
+        public void AssignManager(int managerId)
+        {
+            ManagerId = managerId;
         }
 
         public void AddSkusReserved(List<Sku> skusReserved)
@@ -104,34 +113,10 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
                 SkusReserved.AddRange(skusReserved.Except(SkusReserved));
         }
 
-        private void AddOrderCreatedDomainEvent()
+        private void AddOrderStatusChangedDomainEvent(OrderStatus status, DateTime date)
         {
-            var orderClosedDomainEvent = new OrderClosedDomainEvent();
-            AddDomainEvent(orderClosedDomainEvent);
-        }
-
-        private void AddOrderStatusChangedDomainEvent(OrderStatus status)
-        {
-            var orderStatusChangedDomainEvent = new OrderStatusChangedDomainEvent(status);
+            var orderStatusChangedDomainEvent = new OrderStatusChangedDomainEvent(status, date);
             AddDomainEvent(orderStatusChangedDomainEvent);
-        }
-
-        private void AddOrderCancelledDomainEvent()
-        {
-            var orderCancelledDomainEvent = new OrderCancelledDomainEvent();
-            AddDomainEvent(orderCancelledDomainEvent);
-        }
-
-        private void AddOrderPreparedDomainEvent()
-        {
-            var orderPreparedDomainEvent = new OrderPreparedDomainEvent(EmployeeEmail);
-            AddDomainEvent(orderPreparedDomainEvent);
-        }
-
-        private void AddOrderActiveDomainEvent()
-        {
-            var orderActiveDomainEvent = new OrderActiveDomainEvent();
-            AddDomainEvent(orderActiveDomainEvent);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
                 MerchPackId = o.MerchPackId,
                 StatusId = o.Status.Id,
                 PriorityId = o.Priority.Id,
-                CreatedAt = o.CreatedAt.Value,
+                CreatedAt = o.CreatedAt,
                 ClosedAt = o.ClosedAt.Value,
                 Deadline = o.Deadline.Value,
                 ManagerId = o.ManagerId,

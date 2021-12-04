@@ -16,7 +16,6 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
         private readonly IChangeTracker _changeTracker;
         private readonly IDbConnectionFactory<NpgsqlConnection> _dbConnectionFactory;
         private readonly IEmailingServiceRepository _emailingServiceRepository;
-
         private readonly IEmployeeServiceRepository _employeeServiceRepository;
 
         public IUnitOfWork UnitOfWork { get; }

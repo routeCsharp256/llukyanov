@@ -9,20 +9,20 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate
             Sku sku,
             Name name,
             Description description,
-            MerchItemType itemType,
+            int itemTypeId,
             HashSet<Tag> tags)
         {
             Sku = sku;
             Name = name;
             Description = description;
-            ItemType = itemType;
+            ItemTypeId = itemTypeId;
             Tags = tags;
         }
 
         public Sku Sku { get; }
         public Name Name { get; }
         public Description Description { get; }
-        public MerchItemType ItemType { get; }
+        public int ItemTypeId { get; }
         public HashSet<Tag> Tags { get; }
     }
 }

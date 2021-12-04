@@ -14,7 +14,7 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
             if (email.IsNullOrEmpty())
                 throw new ArgumentNullException("Email is not set");
             if (!Regexes.OzonEmployeeEmailRegex.IsMatch(email))
-                throw new RegexException($"Email has wrong format: {email}");
+                throw new RegexNotMatchException($"Email has wrong format: {email}");
 
             Value = email.ToLower();
         }
