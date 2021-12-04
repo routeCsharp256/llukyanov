@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Mocks
 {
     public interface IEmailingServiceRepository
     {
-        Task SendMailSingle(string email, string subject, string text);
+        Task SendMailSingle(string email, string subject, string text, CancellationToken cancellationToken = default);
     }
 }

@@ -20,7 +20,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
             var order = await _orderRepository.GetOrderByIdAsync(request.OrderId, cancellationToken);
             order.AssignManager(request.ManagerId);
             var result = await _orderRepository.UpdateAsync(order, cancellationToken);
-            order.ChangeOrderStatus();
+            order.ChangeOrderStatus(OrderStatus.Active);
             return Unit.Value;
         }
     }

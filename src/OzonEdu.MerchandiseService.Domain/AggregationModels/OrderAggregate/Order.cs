@@ -5,6 +5,7 @@ using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAgregate;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate;
 using OzonEdu.MerchandiseService.Domain.Events;
+using OzonEdu.MerchandiseService.Domain.Exceptions;
 using OzonEdu.MerchandiseService.Domain.Models;
 
 namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
@@ -28,6 +29,7 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
 
             Status = OrderStatus.New;
             CreatedAt = createdAt;
+            SkusRemained = new List<Sku>(SkusRequested);
 
             AddOrderStatusChangedDomainEvent(OrderStatus.New, createdAt);
         }
@@ -42,6 +44,8 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
         ///     Список товаров, зарезервированных для выдачи.
         /// </summary>
         public List<Sku> SkusReserved { get; } = new();
+
+        public List<Sku> SkusRemained { get; }
 
         public int? MerchPackId { get; }
 
@@ -66,21 +70,21 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
         public bool IsEmployeeReceivedOrder { get; private set; }
 
 
-        public void ChangeOrderStatus()
+        public void ChangeOrderStatus(OrderStatus status)
         {
-            if (Status.Equals(OrderStatus.New) && ManagerId is not null)
+            if (Status.Equals(OrderStatus.New) && status.Equals(OrderStatus.Active) && ManagerId is not null)
             {
                 Status = OrderStatus.Active;
                 AddOrderStatusChangedDomainEvent(OrderStatus.Active, DateTime.Now);
             }
 
-            if (Status.Equals(OrderStatus.Active) && SkusRequested.SequenceEqual(SkusReserved))
+            if (Status.Equals(OrderStatus.Active) && status.Equals(OrderStatus.Prepared) && SkusRequested.SequenceEqual(SkusReserved))
             {
                 Status = OrderStatus.Prepared;
                 AddOrderStatusChangedDomainEvent(OrderStatus.Prepared, DateTime.Now);
             }
 
-            if (Status.Equals(OrderStatus.Prepared) && IsEmployeeReceivedOrder)
+            if (Status.Equals(OrderStatus.Prepared) && status.Equals(OrderStatus.Closed) && IsEmployeeReceivedOrder)
             {
                 ClosedAt = new NullableDate(DateTime.Now);
 
@@ -105,18 +109,26 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
             ManagerId = managerId;
         }
 
-        public void AddSkusReserved(List<Sku> skusReserved)
-        {
-            if (!SkusRequested.Intersect(skusReserved).SequenceEqual(skusReserved))
-                throw new AggregateException("There are items that should not be added to order");
-            if (SkusRequested.Intersect(skusReserved).SequenceEqual(skusReserved))
-                SkusReserved.AddRange(skusReserved.Except(SkusReserved));
-        }
-
         private void AddOrderStatusChangedDomainEvent(OrderStatus status, DateTime date)
         {
             var orderStatusChangedDomainEvent = new OrderStatusChangedDomainEvent(status, date);
             AddDomainEvent(orderStatusChangedDomainEvent);
+        }
+
+        /// <summary>
+        ///     Резервирование тех SKU, которые есть в наличии на складе
+        /// </summary>
+        /// <param name="remainingSkus">Оставшиеся мерч-итемы</param>
+        /// <param name="newSkus">Список SKU вновь поступивших итемов для заказа</param>
+        /// <exception cref="ExtraMerchItemsException"></exception>
+        public void ReserveSkus(IEnumerable<Sku> newSkus)
+        {
+            foreach (var newSku in newSkus)
+            {
+                SkusReserved.Add(newSku);
+                if (SkusRemained.Contains(newSku))
+                    SkusRemained.Remove(newSku);
+            }
         }
     }
 }

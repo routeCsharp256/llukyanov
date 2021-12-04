@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate;
@@ -24,6 +25,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
             var orderDetails = new Order(request.EmployeeEmail, null, request.MerchPackId, OrderPriority.Medium, new NullableDate(request.Deadline));
             var isMerchPackReceived = await _employeeRepository.CheckIsMerchPackReceivedAsync(request.EmployeeEmail,
                 request.EmployeeEventId, request.MerchPackId, cancellationToken);
+            
             if (!isMerchPackReceived)
             {
                 var newOrder = await _orderRepository.CreateAsync(orderDetails, cancellationToken);
@@ -32,8 +34,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
                     OrderId = newOrder.Id
                 };
             }
-
-            return new CreateOrderByPackResponse();
+            throw new Exception("Merch pack has already gotten");
         }
     }
 }

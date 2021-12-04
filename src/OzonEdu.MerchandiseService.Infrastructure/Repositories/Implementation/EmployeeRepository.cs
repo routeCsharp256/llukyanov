@@ -15,7 +15,6 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
         private const int Timeout = 5;
         private readonly IChangeTracker _changeTracker;
         private readonly IDbConnectionFactory<NpgsqlConnection> _dbConnectionFactory;
-        private readonly IEmailingServiceRepository _emailingServiceRepository;
         private readonly IEmployeeServiceRepository _employeeServiceRepository;
 
         public IUnitOfWork UnitOfWork { get; }
@@ -107,22 +106,21 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
             return result;
         }
 
-        public async Task NotifyEmployeeAboutMerchAsync(string employeeEmail,
-            CancellationToken cancellationToken = default)
+        public async Task<OrderReadyMessage> CreateOrderReadyNotification(long orderId, CancellationToken cancellationToken = default)
         {
             const string query = @"
-                SELECT id
-                    ,first_name
-                    ,last_name
-                    ,middle_name
-                    ,department
-                    ,email
-                FROM Employee
-                WHERE email = @EmployeeEmail;";
+                SELECT o.id as order_id 
+                    ,mp.name as merch_pack
+                    ,e.first_name
+                    ,e.email
+                FROM Order o 
+                JOIN Employee e ON e.id = o.employee_id
+                LEFT JOIN MerchPack mp on mp.id = o.merch_pack_id
+                WHERE o.id = @OrderId;";
 
             var parameters = new
             {
-                EmployeeEmail = employeeEmail
+                OrderId = orderId
             };
             var commandDefinition = new CommandDefinition(
                 query,
@@ -130,13 +128,39 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
                 commandTimeout: Timeout,
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
-            var result = await connection.QuerySingleOrDefaultAsync<EmployeeDto>(commandDefinition);
+            var result = await connection.QuerySingleOrDefaultAsync<EmployeeNotificatoionDto>(commandDefinition);
 
-            var subject = "[MerchandiseService] Заберите ваши подарки!";
-            var text =
-                "Мерч по случаю <вставить_нужное> готов! Чтобы получить его, поднимитесь на этаж, прямо по коридуру, налево, направо, снова налево, спуститесь и поднимитесь.";
-
-            await _emailingServiceRepository.SendMailSingle(employeeEmail, subject, text);
+            var emailContent = CreateOrderReadyEmail(result);
+            return new OrderReadyMessage
+            {
+                Email = result.Email,
+                Subject = emailContent.Subject,
+                Text = emailContent.Text,
+            };
         }
-    }
+
+        private EmailContentDto CreateOrderReadyEmail(EmployeeNotificatoionDto notificatoion)
+        {
+            var emailContent = new EmailContentDto();
+            emailContent.Subject = $"{notificatoion.FirstName}, ваш заказ #{notificatoion.OrderId} готов!";
+            
+            // REMARK: да, здесь будут лишние пробелы, если вот так представлять текст, но, думаю, это несущественно сейчас 
+            if (notificatoion.MerchPack is not null)
+            {
+                emailContent.Text =
+                    $@"Ваш набор мерча ""{notificatoion.MerchPack}"" готов!
+                    Чтобы получить его, поднимитесь на этаж, прямо по коридуру, 
+                    налево, направо, снова налево, спуститесь и поднимитесь.";
+            }
+            else
+            {
+                emailContent.Text =
+                    $@"Ваш индивидуальный заказ мерча готов!
+                    Чтобы получить его, поднимитесь на этаж, прямо по коридуру, 
+                    налево, направо, снова налево, спуститесь и поднимитесь.";
+            }
+
+            return emailContent;
+        } 
+    } 
 }

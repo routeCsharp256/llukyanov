@@ -112,11 +112,11 @@ namespace OzonEdu.MerchandiseService.Controllers
 
         [HttpPost]
         [Route("employee/notification")]
-        public async Task<ActionResult> NotifyEmployeeAboutMerch(string employeeEmail, CancellationToken token)
+        public async Task<ActionResult> NotifyEmployeeAboutMerch(long orderId, CancellationToken token)
         {
             var notifyEmployeeRequest = new NotifyEmployeeRequest
             {
-                EmployeeEmail = employeeEmail
+                OrderId = orderId
             };
             var result = await _mediator.Send(notifyEmployeeRequest, token);
 

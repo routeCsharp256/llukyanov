@@ -18,27 +18,6 @@ namespace OzonEdu.MerchandiseService.Migrator.Temp
                     (6, 'Socks')
                 ON CONFLICT DO NOTHING
             ");
-            
-            Execute.Sql(@"
-                INSERT INTO OrderStatus (id, name)
-                VALUES 
-                    (1, 'New'),
-                    (2, 'Active'),
-                    (3, 'Prepared'),
-                    (4, 'Closed'),
-                    (10, 'Cancelled')
-                ON CONFLICT DO NOTHING
-            ");
-            
-            Execute.Sql(@"
-                INSERT INTO OrderPriority (id, name)
-                VALUES 
-                    (1, 'Low'),
-                    (2, 'Medium'),
-                    (3, 'High'),
-                    (10, 'Critical')
-                ON CONFLICT DO NOTHING
-            ");
         }
     }
 }

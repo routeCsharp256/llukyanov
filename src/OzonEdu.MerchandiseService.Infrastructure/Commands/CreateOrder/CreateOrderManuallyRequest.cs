@@ -12,6 +12,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Commands.ReserveMerch
         public int Priority { get; init; }
 
         public List<long> Skus { get; init; } = new();
+        
         public DateTime Deadline { get; init; }
     }
 }
