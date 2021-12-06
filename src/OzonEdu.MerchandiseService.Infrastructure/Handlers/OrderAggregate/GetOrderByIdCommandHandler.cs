@@ -11,16 +11,16 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
 {
     public class GetOrderByIdCommandHandler : IRequestHandler<GetOrderByIdRequest, GetOrderByIdResponse>
     {
-        private readonly IOrderRepository _OrderRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public GetOrderByIdCommandHandler(IOrderRepository OrderRepository)
+        public GetOrderByIdCommandHandler(IOrderRepository orderRepository)
         {
-            _OrderRepository = OrderRepository;
+            _orderRepository = orderRepository;
         }
 
         public async Task<GetOrderByIdResponse> Handle(GetOrderByIdRequest request, CancellationToken cancellationToken)
         {
-            var order = await _OrderRepository.GetOrderByIdAsync(request.OrderId, cancellationToken);
+            var order = await _orderRepository.GetOrderByIdAsync(request.OrderId, cancellationToken);
             return new GetOrderByIdResponse
             {
                 OrderDetails = new OrderDto
@@ -32,7 +32,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
                     MerchPackId = order.MerchPackId,
                     StatusId = order.Status.Id,
                     PriorityId = order.Priority.Id,
-                    CreatedAt = order.CreatedAt.Value,
+                    CreatedAt = order.CreatedAt,
                     ClosedAt = order.ClosedAt.Value,
                     Deadline = order.Deadline.Value,
                     ManagerId = order.ManagerId,

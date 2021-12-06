@@ -12,20 +12,20 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Handlers
         CreateOrderManuallyCommandHandler : IRequestHandler<CreateOrderManuallyRequest, CreateOrderManuallyResponse>
     {
         private readonly IEmployeeRepository _employeeRepository;
-        private readonly IOrderRepository _OrderRepository;
+        private readonly IOrderRepository _orderRepository;
 
-        public CreateOrderManuallyCommandHandler(IOrderRepository OrderRepository,
+        public CreateOrderManuallyCommandHandler(IOrderRepository orderRepository,
             IEmployeeRepository employeeRepository)
         {
-            _OrderRepository = OrderRepository;
+            _orderRepository = orderRepository;
             _employeeRepository = employeeRepository;
         }
 
         public async Task<CreateOrderManuallyResponse> Handle(CreateOrderManuallyRequest request,
             CancellationToken cancellationToken)
         {
-            var orderDetails = new Order(request.EmployeeEmail, request.Skus, null, OrderPriority.Medium);
-            var newOrder = await _OrderRepository.CreateAsync(orderDetails, cancellationToken);
+            var orderDetails = new Order(request.EmployeeEmail, request.Skus, null, OrderPriority.Medium, new NullableDate(request.Deadline));
+            var newOrder = await _orderRepository.CreateAsync(orderDetails, cancellationToken);
             return new CreateOrderManuallyResponse
             {
                 OrderId = newOrder.Id

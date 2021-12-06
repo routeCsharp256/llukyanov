@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AspNetCore.UnitOfWork;
 using Dapper;
 using Npgsql;
+using OzonEdu.MerchandiseService.Domain.AggregationModels.MerchItemAggregate;
 using OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate;
 using OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure.Interfaces;
 using IUnitOfWork = OzonEdu.MerchandiseService.Domain.Contracts.IUnitOfWork;
@@ -42,7 +43,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
                     ,deadline
                     ,is_employee_received_order)
                 VALUES (@EmployeeEmail
-                    ,@SkusRequested
+                    ,@MerchItemSkus
                     ,null
                     ,@MerchPackId
                     ,@Status
@@ -74,7 +75,6 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
             return itemToCreate;
         }
 
-        // TODO: тут не только менеджер обновляется
         public async Task<Order> UpdateAsync(Order itemToUpdate, CancellationToken cancellationToken = default)
         {
             const string query = @"
@@ -87,7 +87,11 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
 
             var parameters = new
             {
-                OrderId = itemToUpdate.Id, itemToUpdate.ManagerId
+                OrderId = itemToUpdate.Id,
+                ManagerId = itemToUpdate.ManagerId,
+                SkusReserved = itemToUpdate.SkusReserved,
+                ClosedAt = itemToUpdate.ClosedAt,
+                IsEmployeeReceivedOrder = itemToUpdate.IsEmployeeReceivedOrder,
             };
             var commandDefinition = new CommandDefinition(
                 query,
@@ -100,7 +104,15 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
             return itemToUpdate;
         }
 
-        public async Task<Order> GetOrderByIdAsync(long OrderId, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Sku>> ReserveSkusAsync(long orderId, List<Sku> skusReserved, CancellationToken cancellationToken = default)
+        {
+            var order = await GetOrderByIdAsync(orderId, cancellationToken);
+            order.ReserveSkus(skusReserved);
+
+            return order.SkusRemained;
+        }
+
+        public async Task<Order> GetOrderByIdAsync(long orderId, CancellationToken cancellationToken = default)
         {
             const string query = @"
                 SELECT id
@@ -120,7 +132,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
 
             var parameters = new
             {
-                OrderId
+                OrderId = orderId
             };
             var commandDefinition = new CommandDefinition(
                 query,
@@ -129,9 +141,38 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
                 cancellationToken: cancellationToken);
             var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
 
-            var result = await connection.QuerySingleOrDefaultAsync(commandDefinition);
+            var order = await connection.QuerySingleOrDefaultAsync<Order>(commandDefinition);
 
-            return result;
+            return order;
+        }
+
+        public async Task<IEnumerable<Order>> GetAllOpenOrdersAsync(CancellationToken cancellationToken = default)
+        {
+            const string query = @"
+                SELECT id
+                    ,employee_id
+                    ,skus_requested
+                    ,skus_reserved
+                    ,merch_pack_id
+                    ,status
+                    ,priority
+                    ,created_at
+                    ,closed_at
+                    ,deadline
+                    ,manager_id
+                    ,is_employee_received_order
+                FROM Order
+                WHERE status = 'Active'";
+            
+            var commandDefinition = new CommandDefinition(
+                query,
+                commandTimeout: Timeout,
+                cancellationToken: cancellationToken);
+            var connection = await _dbConnectionFactory.CreateConnection(cancellationToken);
+
+            var orders = await connection.QueryAsync<Order>(commandDefinition);
+
+            return orders;
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByEmployeeIdAsync(int employeeId,
@@ -167,20 +208,6 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Implementation
             var result = await connection.QueryAsync<Order>(commandDefinition);
 
             return result;
-        }
-
-        public async Task TryReserveMerchItemsAsync(CancellationToken cancellationToken = default)
-        {
-            // Метод вызывается тогда, когда на склад поступают новые товары (по идее, поступление товаров должно в Кафку писаться)
-
-            // 1. Получаем доступные товары с помощью метода GetAvailableQuantity() из StockItemRepository
-            // 2. Получаем все доступные заказов, отсортированные по возрастанию дедлайна и убыванию приоритета
-            // 2. Распределяем (добавляем в SkuReserved) товары среди заказов
-            // 3. Убираем со склада зарезервированные итемы командой GiveOutStockItems() из StockItemRepository
-            // 4. Для всех заказов: если заказ завершён, меняем его статус с Active на Prepared
-            // 5. Делаем UpdateAsync заказов
-
-            throw new NotImplementedException();
         }
 
         public Task CompleteOrder(CancellationToken cancellationToken = default)

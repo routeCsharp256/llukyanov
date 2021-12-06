@@ -4,9 +4,6 @@ using OzonEdu.MerchandiseService.Domain.Models;
 
 namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
 {
-    /// <summary>
-    ///     Тот же VO NullableDate, только nullable
-    /// </summary>
     public class NullableDate : ValueObject
     {
         public NullableDate(DateTime date)

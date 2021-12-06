@@ -8,16 +8,25 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.OrderAggregate
     public class OrderStatus : Enumeration
     {
         public static OrderStatus New = new(1, nameof(New));
-        public static OrderStatus Active = new(2, nameof(Active)); // заказ обрабатывается
+        /// <summary>
+        /// заказ обрабатывается
+        /// </summary>
+        public static OrderStatus Active = new(2, nameof(Active));
 
-        public static OrderStatus
-            Prepared = new(3, nameof(Prepared)); // заказ полностью готов, ожидаем, когда сотрудник заберет его
+        /// <summary>
+        /// заказ полностью готов, ожидаем, когда сотрудник заберет его
+        /// </summary>
+        public static OrderStatus Prepared = new(3, nameof(Prepared));
 
-        public static OrderStatus
-            Closed = new(4,
-                nameof(Closed)); // заказ завершён из-за того, что сотрудник взял все предназначенные ему мерч-итемы
+        /// <summary>
+        /// заказ завершён из-за того, что сотрудник взял все предназначенные ему мерч-итемы
+        /// </summary>
+        public static OrderStatus Closed = new(4, nameof(Closed));
 
-        public static OrderStatus Cancelled = new(10, nameof(Cancelled)); // заказ отменён в ручном режиме
+        /// <summary>
+        /// заказ отменён в ручном режиме
+        /// </summary>
+        public static OrderStatus Cancelled = new(10, nameof(Cancelled));
 
         public OrderStatus(int id, string name) : base(id, name)
         {

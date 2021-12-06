@@ -9,9 +9,9 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAgregate
         public Date(DateTime date)
         {
             if (date == default)
-                throw new ArgumentNullException("NullableDate is not set");
+                throw new ArgumentNullException("Date is not set");
 
-            Value = date;
+            Value = date.Date;
         }
 
         public DateTime Value { get; }

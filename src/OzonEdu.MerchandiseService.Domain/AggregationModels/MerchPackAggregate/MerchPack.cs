@@ -7,13 +7,11 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.MerchPackAggregate
     public class MerchPack : Entity
     {
         public MerchPack(
-            int id,
             Name name,
             int employeeEventId,
             bool isConference,
             List<Sku> skusRequested)
         {
-            Id = id;
             Name = name;
             EmployeeEventId = employeeEventId;
             IsConference = isConference;

@@ -13,7 +13,7 @@ namespace OzonEdu.MerchandiseService.Controllers
     [Produces("application/json")]
     public class MerchandiseController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly IMediator _mediator; 
 
         public MerchandiseController(IMediator mediator)
         {
@@ -53,6 +53,22 @@ namespace OzonEdu.MerchandiseService.Controllers
             return Ok(result);
         }
 
+        [HttpPost]
+        [Route("pack")]
+        public async Task<ActionResult> CreateMerchPack(string name, int employeeEventId, bool isConference,
+            List<long> merchItemSkus, CancellationToken token)
+        {
+            var createMerchPackRequest = new CreateMerchPackRequest
+            {
+                Name = name,
+                EmployeeEventId = employeeEventId,
+                IsConference = isConference,
+                MerchItemSkus = merchItemSkus,
+            };
+            var result = await _mediator.Send(createMerchPackRequest, token);
+
+            return Ok(result);
+        }
 
         [HttpPost]
         [Route("orders/manager")]
@@ -69,12 +85,12 @@ namespace OzonEdu.MerchandiseService.Controllers
         }
 
         [HttpGet]
-        [Route("orders/{OrderId}")]
-        public async Task<ActionResult> GetOrderById([FromRoute] long OrderId, CancellationToken token)
+        [Route("orders/{orderId:long}")]
+        public async Task<ActionResult> GetOrderById([FromRoute] long orderId, CancellationToken token)
         {
             var getOrderById = new GetOrderByIdRequest
             {
-                OrderId = OrderId
+                OrderId = orderId
             };
             var result = await _mediator.Send(getOrderById, token);
 
@@ -82,7 +98,7 @@ namespace OzonEdu.MerchandiseService.Controllers
         }
 
         [HttpGet]
-        [Route("orders/details/employee-orders/{employeeId}")]
+        [Route("orders/employee/{employeeId:int}")]
         public async Task<ActionResult> GetOrdersByEmployeeId([FromRoute] int employeeId, CancellationToken token)
         {
             var getOrdersByEmployeeId = new GetOrdersByEmployeeIdRequest
@@ -96,11 +112,11 @@ namespace OzonEdu.MerchandiseService.Controllers
 
         [HttpPost]
         [Route("employee/notification")]
-        public async Task<ActionResult> NotifyEmployeeAboutMerch(string employeeEmail, CancellationToken token)
+        public async Task<ActionResult> NotifyEmployeeAboutMerch(long orderId, CancellationToken token)
         {
             var notifyEmployeeRequest = new NotifyEmployeeRequest
             {
-                EmployeeEmail = employeeEmail
+                OrderId = orderId
             };
             var result = await _mediator.Send(notifyEmployeeRequest, token);
 

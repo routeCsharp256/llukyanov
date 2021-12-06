@@ -7,6 +7,7 @@ namespace OzonEdu.MerchandiseService.Infrastructure.Repositories.Infrastructure
 {
     public class ChangeTracker : IChangeTracker
     {
+        
         // Можно заменить на любую другую имплементацию. Не только через ConcurrentBag
         private readonly ConcurrentBag<Entity> _usedEntitiesBackingField;
 

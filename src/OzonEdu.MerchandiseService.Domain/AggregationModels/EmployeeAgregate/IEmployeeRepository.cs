@@ -23,9 +23,9 @@ namespace OzonEdu.MerchandiseService.Domain.AggregationModels.EmployeeAggregate
         /// <summary>
         ///     Отправка сообщения сотруднику о подготовленном заказе мерча
         /// </summary>
-        /// <param name="employeeEmail">Email сотрудника</param>
+        /// <param name="orderId">ID заказа</param>
         /// <param name="cancellationToken">Токен для отмены операции<see cref="CancellationToken" /></param>
         /// <returns></returns>
-        Task NotifyEmployeeAboutMerchAsync(string employeeEmail, CancellationToken cancellationToken = default);
+        Task<OrderReadyMessage> CreateOrderReadyNotification(long orderId, CancellationToken cancellationToken = default);
     }
 }

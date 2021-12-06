@@ -11,31 +11,31 @@ namespace OzonEdu.MerchandiseService.Domain.Tests
         [Fact]
         public void SetEmailIncorrect_WrongCountryDomain()
         {
-            Assert.Throws<RegexException>(() => new Email("test@ozon.unk"));
+            Assert.Throws<RegexNotMatchException>(() => new Email("test@ozon.unk"));
         }
 
         [Fact]
         public void SetEmailIncorrect_WrongCompanyDomain()
         {
-            Assert.Throws<RegexException>(() => new Email("test@wildberries.ru"));
+            Assert.Throws<RegexNotMatchException>(() => new Email("test@wildberries.ru"));
         }
 
         [Fact]
         public void SetEmailIncorrect_BadCharsInName()
         {
-            Assert.Throws<RegexException>(() => new Email("te$t@ozon.ru"));
+            Assert.Throws<RegexNotMatchException>(() => new Email("te$t@ozon.ru"));
         }
 
         [Fact]
         public void SetEmailIncorrect_ExtraSymbols()
         {
-            Assert.Throws<RegexException>(() => new Email("hello! test@ozon.ru sincerely yours"));
+            Assert.Throws<RegexNotMatchException>(() => new Email("hello! test@ozon.ru sincerely yours"));
         }
 
         [Fact]
         public void SetEmailIncorrect_CyrillicSymbols()
         {
-            Assert.Throws<RegexException>(() => new Email("тест@ozon.ru"));
+            Assert.Throws<RegexNotMatchException>(() => new Email("тест@ozon.ru"));
         }
 
         [Fact]

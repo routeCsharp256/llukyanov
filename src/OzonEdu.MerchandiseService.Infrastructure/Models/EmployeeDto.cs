@@ -1,17 +1,15 @@
 ﻿namespace OzonEdu.MerchandiseService.Infrastructure.Models
 {
-    public class EmployeeDto
+    public class EmployeeNotificatoionDto
     {
-        public int Id { get; set; }
-
+        public long OrderId { get; set; }
+        
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
 
-        public string MiddleName { get; set; }
-
-        public string Department { get; set; }
-
         public string Email { get; set; }
+        
+        public string MerchPack { get; set; }
     }
 }
